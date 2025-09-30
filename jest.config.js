@@ -11,7 +11,6 @@ module.exports = {
 
   // Cobertura de código
   collectCoverage: false,
-
   collectCoverageFrom: [
     'src/**/*.js',
     '!src/interface.js', // Excluir interface CLI dos testes de cobertura
@@ -38,18 +37,6 @@ module.exports = {
     }
   },
 
-  // Relatórios de testes e cobertura em JUnit
-  reporters: [
-    'default',
-    [
-      'jest-junit',
-      {
-        outputDirectory: 'test-results',
-        outputName: 'test-results.xml'
-      }
-    ]
-  ],
-
   // Configurações de exibição
   verbose: true,
 
@@ -59,3 +46,4 @@ module.exports = {
   // Timeout para testes
   testTimeout: 10000
 };
+
