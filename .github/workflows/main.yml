@@ -75,7 +75,7 @@ jobs:
       - name: Send email notification
         run: node scripts/send_email.js
         env:
-          PIPELINE_RECIPIENT: ${{ secrets.EMAIL_RECIPIENT }}
+          EMAIL_RECIPIENT: ${{ secrets.EMAIL_RECIPIENT }}
           SMTP_HOST: smtp.office365.com
           SMTP_PORT: 587
           SMTP_USER: ${{ secrets.SMTP_USER }}
