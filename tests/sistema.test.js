@@ -1,4 +1,4 @@
-import SistemaGerenciamentoUsuarios from '../src/index.js'; // ajuste o caminho conforme necessário
+const SistemaGerenciamentoUsuarios = require('../src/index.js'); // ajuste o caminho conforme necessário
 
 describe("Sistema de Gerenciamento de Usuários - Testes de Integração", () => {
     let sistema;
