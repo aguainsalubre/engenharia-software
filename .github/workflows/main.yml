@@ -34,7 +34,7 @@ jobs:
 
   build:
     runs-on: ubuntu-latest
-    needs: tests # Só roda se os testes passarem
+    needs: tests
     steps:
       - name: Checkout code
         uses: actions/checkout@v3
