@@ -12,7 +12,7 @@
     "send-email": "node scripts/send_email.js",
     "clean": "rm -rf node_modules build && mkdir build",
     "dev": "npx nodemon src/index.js",
-    "test": "jest --runInBand --reporters=default --reporters=jest-junit --outputFile=junit.xml"
+     "test": "npx jest --runInBand --reporters=default --reporters=jest-junit --outputFile=junit.xml"
   },
   "dependencies": {
     "chalk": "^4.1.2",
