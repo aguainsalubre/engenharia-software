@@ -272,3 +272,51 @@ describe("Sistema de Gerenciamento de Usuários - Testes de Integração", () =>
     });
 });
 
+describe("Cenários Adicionais de Teste", () => {
+    test("deve retornar estatísticas corretas após múltiplas adições e remoções", () => {
+        const gerenciador = sistema.obterGerenciador();
+        gerenciador.adicionarUsuario("User A", "usera@email.com", "111.111.111-11");
+        gerenciador.adicionarUsuario("User B", "userb@email.com", "222.222.222-22");
+        const userC = gerenciador.adicionarUsuario("User C", "userc@email.com", "333.333.333-33");
+        gerenciador.removerUsuario(userC.usuario.id);
+
+        const stats = gerenciador.obterEstatisticas();
+        expect(stats.totalUsuarios).toBe(3);
+        expect(stats.usuariosAtivos).toBe(2);
+        expect(stats.usuariosInativos).toBe(1);
+    });
+
+    test("deve buscar usuário por email com diferentes casos de letra", () => {
+        const gerenciador = sistema.obterGerenciador();
+        gerenciador.adicionarUsuario("User D", "userd@email.com", "444.444.444-44");
+        expect(gerenciador.buscarPorEmail("USERD@EMAIL.COM")).toBeDefined();
+        expect(gerenciador.buscarPorEmail("UserD@email.com")).toBeDefined();
+    });
+
+    test("deve rejeitar atualização de email para um email já existente", () => {
+        const gerenciador = sistema.obterGerenciador();
+        const userE = gerenciador.adicionarUsuario("User E", "usere@email.com", "555.555.555-55");
+        gerenciador.adicionarUsuario("User F", "userf@email.com", "666.666.666-66");
+
+        const resultado = gerenciador.atualizarUsuario(userE.usuario.id, { email: "userf@email.com" });
+        expect(resultado.sucesso).toBe(false);
+        expect(resultado.erro).toContain("Email já cadastrado para outro usuário");
+    });
+
+    test("deve rejeitar atualização de CPF para um CPF já existente", () => {
+        const gerenciador = sistema.obterGerenciador();
+        const userG = gerenciador.adicionarUsuario("User G", "userg@email.com", "777.777.777-77");
+        gerenciador.adicionarUsuario("User H", "userh@email.com", "888.888.888-88");
+
+        const resultado = gerenciador.atualizarUsuario(userG.usuario.id, { cpf: "888.888.888-88" });
+        expect(resultado.sucesso).toBe(false);
+        expect(resultado.erro).toContain("CPF já cadastrado para outro usuário");
+    });
+
+    test("deve validar que o ID do usuário é um UUID válido", () => {
+        const gerenciador = sistema.obterGerenciador();
+        const userI = gerenciador.adicionarUsuario("User I", "useri@email.com", "999.999.999-99");
+        const uuidRegex = /^[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}$/i;
+        expect(userI.usuario.id).toMatch(uuidRegex);
+    });
+});
