@@ -12,7 +12,7 @@
     "send-email": "node scripts/send_email.js",
     "clean": "rm -rf node_modules build && mkdir build",
     "dev": "npx nodemon src/index.js",
-     "test": "npx jest --runInBand --reporters=default --reporters=jest-junit --outputFile=junit.xml"
+    "test": "npx jest --runInBand --reporters=default --reporters=jest-junit --outputFile=junit.xml"
   },
   "dependencies": {
     "chalk": "^4.1.2",
@@ -20,9 +20,12 @@
     "nodemailer": "^7.0.6"
   },
   "devDependencies": {
+    "@babel/core": "^7.28.4",
+    "@babel/preset-env": "^7.28.3",
+    "babel-jest": "^30.2.0",
     "jest": "^30.1.3",
-    "nodemon": "^3.0.1",
-    "jest-junit": "^16.0.0"
+    "jest-junit": "^16.0.0",
+    "nodemon": "^3.0.1"
   },
   "keywords": [
     "gerenciamento",

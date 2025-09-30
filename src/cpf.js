@@ -1,25 +1,29 @@
 /**
- * Valida uma string de CPF.
+ * Valida uma string ou número de CPF.
  * A função realiza as seguintes verificações:
- * 1. Verifica se contém apenas dígitos, pontos e traços (sem letras/símbolos).
+ * 1. Converte a entrada para string para um tratamento unificado.
  * 2. Remove caracteres não numéricos.
  * 3. Verifica se o CPF possui 11 dígitos.
  * 4. Verifica se todos os dígitos são iguais (caso inválido).
  * 5. Calcula e valida os dois dígitos verificadores.
  *
- * @param {string|number} cpf - A string do CPF a ser validada.
+ * @param {string|number} cpf - O CPF a ser validado.
  * @returns {boolean} - Retorna `true` se o CPF for válido, `false` caso contrário.
  */
 function validaCPF(cpf) {
-    if (typeof cpf !== 'string') return false;
-
-    // Não permitir caracteres além de números, pontos e traços
-    if (!/^[0-9.\-\s]+$/.test(cpf)) {
+    // Se a entrada for nula ou indefinida, já retorna falso.
+    if (cpf == null) {
         return false;
     }
 
-    const cpfLimpo = cpf.replace(/\D/g, '');
+    // Converte a entrada para string para garantir que o resto da lógica funcione.
+    const cpfString = String(cpf);
 
+    // Remove caracteres não numéricos para a validação.
+    // O regex anterior /^ [0-9.\-\s]+$/ foi removido pois a limpeza abaixo é mais eficaz.
+    const cpfLimpo = cpfString.replace(/\D/g, '');
+
+    // As validações seguintes permanecem as mesmas.
     if (cpfLimpo.length !== 11) return false;
     if (/^(\d)\1{10}$/.test(cpfLimpo)) return false;
 
