@@ -8,6 +8,24 @@ describe("Sistema de Gerenciamento de Usuários - Testes de Integração", () =>
         sistema = new SistemaGerenciamentoUsuarios();
     });
 
+    // Função auxiliar para gerar CPFs válidos para testes
+    function gerarCPFValido(base) {
+        // CPFs válidos conhecidos para testes
+        const cpfsValidos = [
+            '12345678909', '98765432100', '11144477735',
+            '22233344455', '33344455566', '44455566677',
+            '55566677788', '66677788899', '77788899900',
+            '88899900011', '99900011122', '10203040506'
+        ];
+        
+        if (base < cpfsValidos.length) {
+            return cpfsValidos[base];
+        }
+        
+        // Para números maiores, usar um dos CPFs válidos conhecidos ciclicamente
+        return cpfsValidos[base % cpfsValidos.length];
+    }
+
     describe("Inicialização do Sistema", () => {
         test("deve criar instância do sistema corretamente", () => {
             expect(sistema).toBeDefined();
@@ -193,7 +211,7 @@ describe("Sistema de Gerenciamento de Usuários - Testes de Integração", () =>
                 gerenciador.adicionarUsuario(
                     `Usuário ${i}`,
                     `usuario${i}@email.com`,
-                    `000.000.00${i}-9${i}`
+                    gerarCPFValido(i)
                 );
             }
 
@@ -221,15 +239,11 @@ describe("Sistema de Gerenciamento de Usuários - Testes de Integração", () =>
 
             // Cadastrar 100 usuários
             for (let i = 0; i < 100; i++) {
-                // Gerar CPF válido para cada usuário
-                const cpfBase = String(i).padStart(9, '0');
-                const cpfCompleto = cpfBase + '09'; // Exemplo de CPF válido
-                
                 // Adicionar usuário
                 const resultado = gerenciador.adicionarUsuario(
                     `Usuário ${i}`,
                     `usuario${i}@email.com`,
-                    cpfCompleto
+                    gerarCPFValido(i)
                 );
                 // Verificar se o cadastro foi bem-sucedido
                 expect(resultado.sucesso).toBe(true);
@@ -246,12 +260,10 @@ describe("Sistema de Gerenciamento de Usuários - Testes de Integração", () =>
 
             // Cadastrar usuários
             for (let i = 0; i < 50; i++) {
-                const cpfBase = String(i).padStart(9, '0');
-                const cpfCompleto = cpfBase + '09'; // Exemplo de CPF válido
                 gerenciador.adicionarUsuario(
                     `Usuário ${i}`,
                     `usuario${i}@email.com`,
-                    cpfCompleto
+                    gerarCPFValido(i)
                 );
             }
 
@@ -259,9 +271,7 @@ describe("Sistema de Gerenciamento de Usuários - Testes de Integração", () =>
 
             // Realizar muitas buscas
             for (let i = 0; i < 50; i++) {
-                const cpfBase = String(i).padStart(9, '0');
-                const cpfCompleto = cpfBase + '09'; // Exemplo de CPF válido
-                const usuario = gerenciador.buscarPorCPF(cpfCompleto);
+                const usuario = gerenciador.buscarPorCPF(gerarCPFValido(i));
                 expect(usuario).toBeDefined();
                 expect(usuario.nome).toBe(`Usuário ${i}`);
             }

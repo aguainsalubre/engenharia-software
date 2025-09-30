@@ -10,7 +10,7 @@ module.exports = {
   ],
 
   // Cobertura de código
-  collectCoverage: false,
+  collectCoverage: true,
   collectCoverageFrom: [
     'src/**/*.js',
     '!src/interface.js', // Excluir interface CLI dos testes de cobertura
@@ -21,8 +21,12 @@ module.exports = {
   coverageReporters: [
     'text',
     'lcov',
-    'html'
+    'html',
+    'json'
   ],
+
+  // Configuração de relatórios para CI/CD
+  reporters: ['default'],
 
   // Diretório de saída da cobertura
   coverageDirectory: 'coverage',

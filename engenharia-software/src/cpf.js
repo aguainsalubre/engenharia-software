@@ -10,8 +10,20 @@
  * @returns {boolean} - Retorna `true` se o CPF for válido, `false` caso contrário.
  */
 function validaCPF(cpf) {
-    // 1. Remove caracteres não numéricos (pontos, traços, etc.)
-    const cpfLimpo = String(cpf).replace(/\D/g, '');
+    // Verificação inicial: se não é string ou número, já é inválido
+    if (cpf === null || cpf === undefined) {
+        return false;
+    }
+
+    const cpfString = String(cpf);
+    
+    // Verifica se contém apenas dígitos e caracteres de formatação válidos (., -, espaços)
+    if (!/^[\d\s\.\-]*$/.test(cpfString)) {
+        return false;
+    }
+
+    // 1. Remove caracteres não numéricos (pontos, traços, espaços)
+    const cpfLimpo = cpfString.replace(/\D/g, '');
 
     // 2. Verifica se o CPF possui 11 dígitos
     if (cpfLimpo.length !== 11) {

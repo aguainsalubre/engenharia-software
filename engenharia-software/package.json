@@ -7,9 +7,12 @@
     "start": "node src/index.js",
     "demo": "node src/index.js --demo",
     "build": "npm run clean && npm install --production && ./build.sh",
-    "clean": "rm -rf node_modules build && mkdir build",
+    "clean": "rm -rf node_modules build coverage && mkdir build",
     "dev": "npx nodemon src/index.js",
-    "test": "jest"
+    "test": "jest",
+    "test:ci": "jest --ci --coverage --watchAll=false",
+    "test:watch": "jest --watch",
+    "test:coverage": "jest --coverage"
   },
   "dependencies": {
     "chalk": "^4.1.2",
