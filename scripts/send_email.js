@@ -2,7 +2,7 @@
 const nodemailer = require('nodemailer');
 
 async function main() {
-    const recipient = process.env.PIPELINE_RECIPIENT;
+    const recipient = process.env.EMAIL_RECIPIENT;
     const smtpHost = process.env.SMTP_HOST;
     const smtpPort = parseInt(process.env.SMTP_PORT || '587', 10);
     const smtpUser = process.env.SMTP_USER;
