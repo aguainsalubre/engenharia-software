@@ -1,0 +1,58 @@
+name: CI/CD Pipeline
+
+on:
+  push:
+    branches:
+      - main
+  pull_request:
+    branches:
+      - main
+
+jobs:
+  tests:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v3
+
+      - name: Setup Node.js
+        uses: actions/setup-node@v3
+        with:
+          node-version: '18'
+
+      - name: Install dependencies
+        run: npm install
+
+      - name: Run tests
+        run: npm test
+
+      - name: Upload test report
+        uses: actions/upload-artifact@v3
+        with:
+          name: test-report
+          path: test-results/test-results.xml
+
+build:
+
+notify:
+  runs-on: ubuntu-latest
+  needs: [tests, build] # Precisa da construção de 'build' do outro membro se não nao roda
+  if: always() # caso falhe testes e buids roda de qualquer jeito (._.)
+  steps:
+    - name: Checkout code
+      uses: actions/checkout@v3
+
+    - name: Setup Node.js
+      uses: actions/setup-node@v3
+      with:
+        node-version: '18'
+
+    - name: Install dependencies
+      run: npm install
+
+    - name: Send email notification
+      run: node scripts/send_email.js
+      env:
+        EMAIL_RECIPIENT: ${{ secrets.EMAIL_RECIPIENT }}
+        PIPELINE_STATUS: ${{ job.status }}
+
