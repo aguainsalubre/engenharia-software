@@ -8,6 +8,19 @@ describe("Sistema de Gerenciamento de Usuários - Testes de Integração", () =>
         sistema = new SistemaGerenciamentoUsuarios();
     });
 
+    afterEach(() => {
+        // Garante que timers, handles ou conexões sejam limpos após cada teste
+        jest.clearAllTimers();
+        jest.clearAllMocks();
+    });
+
+    afterAll(() => {
+        // Fecha qualquer handle aberto para o Jest conseguir encerrar
+        if (typeof sistema.fecharConexoes === "function") {
+            sistema.fecharConexoes();
+        }
+    });
+
     describe("Inicialização do Sistema", () => {
         test("deve criar instância do sistema corretamente", () => {
             expect(sistema).toBeDefined();
@@ -221,22 +234,19 @@ describe("Sistema de Gerenciamento de Usuários - Testes de Integração", () =>
 
             // Cadastrar 100 usuários
             for (let i = 0; i < 100; i++) {
-                // Gerar CPF válido para cada usuário
                 const cpfBase = String(i).padStart(9, '0');
-                const cpfCompleto = cpfBase + '09'; // Exemplo de CPF válido
-                
-                // Adicionar usuário
+                const cpfCompleto = cpfBase + '09';
+
                 const resultado = gerenciador.adicionarUsuario(
                     `Usuário ${i}`,
                     `usuario${i}@email.com`,
                     cpfCompleto
                 );
-                // Verificar se o cadastro foi bem-sucedido
                 expect(resultado.sucesso).toBe(true);
             }
 
             const tempoTotal = Date.now() - inicio;
-            expect(tempoTotal).toBeLessThan(1000); // Menos de 1 segundo
+            expect(tempoTotal).toBeLessThan(1000);
 
             expect(gerenciador.listarUsuarios()).toHaveLength(100);
         });
@@ -244,10 +254,9 @@ describe("Sistema de Gerenciamento de Usuários - Testes de Integração", () =>
         test("deve manter eficiência nas buscas", () => {
             const gerenciador = sistema.obterGerenciador();
 
-            // Cadastrar usuários
             for (let i = 0; i < 50; i++) {
                 const cpfBase = String(i).padStart(9, '0');
-                const cpfCompleto = cpfBase + '09'; // Exemplo de CPF válido
+                const cpfCompleto = cpfBase + '09';
                 gerenciador.adicionarUsuario(
                     `Usuário ${i}`,
                     `usuario${i}@email.com`,
@@ -257,18 +266,16 @@ describe("Sistema de Gerenciamento de Usuários - Testes de Integração", () =>
 
             const inicio = Date.now();
 
-            // Realizar muitas buscas
             for (let i = 0; i < 50; i++) {
                 const cpfBase = String(i).padStart(9, '0');
-                const cpfCompleto = cpfBase + '09'; // Exemplo de CPF válido
+                const cpfCompleto = cpfBase + '09';
                 const usuario = gerenciador.buscarPorCPF(cpfCompleto);
                 expect(usuario).toBeDefined();
                 expect(usuario.nome).toBe(`Usuário ${i}`);
             }
 
             const tempoTotal = Date.now() - inicio;
-            expect(tempoTotal).toBeLessThan(100); // Menos de 100ms
+            expect(tempoTotal).toBeLessThan(100);
         });
     });
 });
-
