@@ -1,16 +1,14 @@
-import SistemaGerenciamentoUsuarios from '../src/index.js'; // Certifique-se de que o caminho e a exportação default estejam corretos no index.js
-
-describe("Sistema de Gerenciamento de Usuários - Testes de Integração", () => {
-    let sistema;
+import SistemaGerenciamentoUsuarios from '../src/index.js'; // ajuste o caminho conforme necessário
 
 describe("Sistema de Gerenciamento de Usuários - Testes de Integração", () => {
     let sistema;
 
     beforeEach(() => {
-        // Re-inicializa o sistema antes de cada teste para garantir isolamento
+        // Re-inicializa o sistema antes de cada teste
         sistema = new SistemaGerenciamentoUsuarios();
     });
 
+    // ===== Inicialização do Sistema =====
     describe("Inicialização do Sistema", () => {
         test("deve criar instância do sistema corretamente", () => {
             expect(sistema).toBeDefined();
@@ -27,11 +25,11 @@ describe("Sistema de Gerenciamento de Usuários - Testes de Integração", () =>
         });
     });
 
+    // ===== Fluxo Completo de Usuário =====
     describe("Fluxo Completo de Usuário", () => {
         test("deve executar fluxo completo: cadastrar, buscar, atualizar e remover", () => {
             const gerenciador = sistema.obterGerenciador();
 
-            // 1. Cadastrar usuário
             const cadastro = gerenciador.adicionarUsuario(
                 "João Silva",
                 "joao@email.com",
@@ -39,15 +37,11 @@ describe("Sistema de Gerenciamento de Usuários - Testes de Integração", () =>
                 "(11) 99999-1234"
             );
             expect(cadastro.sucesso).toBe(true);
-
             const usuarioId = cadastro.usuario.id;
 
-            // 2. Buscar usuário
             const usuarioEncontrado = gerenciador.buscarPorId(usuarioId);
-            expect(usuarioEncontrado).toBeDefined();
             expect(usuarioEncontrado.nome).toBe("João Silva");
 
-            // 3. Atualizar usuário
             const atualizacao = gerenciador.atualizarUsuario(usuarioId, {
                 nome: "João Silva Santos",
                 telefone: "(11) 88888-5678"
@@ -56,16 +50,13 @@ describe("Sistema de Gerenciamento de Usuários - Testes de Integração", () =>
             expect(atualizacao.usuario.nome).toBe("João Silva Santos");
             expect(atualizacao.usuario.telefone).toBe("(11) 88888-5678");
 
-            // 4. Verificar na listagem
             const usuarios = gerenciador.listarUsuarios();
             expect(usuarios).toHaveLength(1);
             expect(usuarios[0].nome).toBe("João Silva Santos");
 
-            // 5. Remover usuário
             const remocao = gerenciador.removerUsuario(usuarioId);
             expect(remocao.sucesso).toBe(true);
 
-            // 6. Verificar remoção
             const usuariosAposRemocao = gerenciador.listarUsuarios();
             expect(usuariosAposRemocao).toHaveLength(0);
         });
@@ -73,7 +64,6 @@ describe("Sistema de Gerenciamento de Usuários - Testes de Integração", () =>
         test("deve manter integridade dos dados durante operações múltiplas", () => {
             const gerenciador = sistema.obterGerenciador();
 
-            // Cadastrar múltiplos usuários
             const usuarios = [
                 { nome: "João", email: "joao@email.com", cpf: "123.456.789-09" },
                 { nome: "Maria", email: "maria@email.com", cpf: "987.654.321-00" },
@@ -91,30 +81,24 @@ describe("Sistema de Gerenciamento de Usuários - Testes de Integração", () =>
                 idsUsuarios.push(resultado.usuario.id);
             });
 
-            // Verificar que todos foram cadastrados
             expect(gerenciador.listarUsuarios()).toHaveLength(3);
-
-            // Buscar cada usuário por diferentes métodos
             expect(gerenciador.buscarPorCPF("123.456.789-09").nome).toBe("João");
             expect(gerenciador.buscarPorEmail("maria@email.com").nome).toBe("Maria");
             expect(gerenciador.buscarPorId(idsUsuarios[2]).nome).toBe("Pedro");
 
-            // Remover usuário do meio
             gerenciador.removerUsuario(idsUsuarios[1]);
             expect(gerenciador.listarUsuarios()).toHaveLength(2);
-
-            // Verificar que os outros usuários ainda existem
             expect(gerenciador.buscarPorId(idsUsuarios[0])).toBeDefined();
             expect(gerenciador.buscarPorId(idsUsuarios[2])).toBeDefined();
             expect(gerenciador.buscarPorId(idsUsuarios[1])).toBeNull();
         });
     });
 
+    // ===== Validações de Negócio =====
     describe("Validações de Negócio", () => {
         test("deve impedir cadastro de usuários com dados conflitantes", () => {
             const gerenciador = sistema.obterGerenciador();
 
-            // Cadastrar primeiro usuário
             const primeiro = gerenciador.adicionarUsuario(
                 "João Silva",
                 "joao@email.com",
@@ -122,7 +106,6 @@ describe("Sistema de Gerenciamento de Usuários - Testes de Integração", () =>
             );
             expect(primeiro.sucesso).toBe(true);
 
-            // Tentar cadastrar com mesmo CPF
             const segundoCPF = gerenciador.adicionarUsuario(
                 "Maria Santos",
                 "maria@email.com",
@@ -131,7 +114,6 @@ describe("Sistema de Gerenciamento de Usuários - Testes de Integração", () =>
             expect(segundoCPF.sucesso).toBe(false);
             expect(segundoCPF.erro).toContain("CPF já cadastrado");
 
-            // Tentar cadastrar com mesmo email
             const segundoEmail = gerenciador.adicionarUsuario(
                 "Pedro Silva",
                 "joao@email.com",
@@ -144,7 +126,6 @@ describe("Sistema de Gerenciamento de Usuários - Testes de Integração", () =>
         test("deve validar integridade dos dados durante atualizações", () => {
             const gerenciador = sistema.obterGerenciador();
 
-            // Cadastrar dois usuários
             const usuario1 = gerenciador.adicionarUsuario(
                 "João",
                 "joao@email.com",
@@ -156,14 +137,12 @@ describe("Sistema de Gerenciamento de Usuários - Testes de Integração", () =>
                 "987.654.321-00"
             );
 
-            // Tentar atualizar usuário1 com CPF do usuário2
             const atualizacaoCPF = gerenciador.atualizarUsuario(usuario1.usuario.id, {
                 cpf: "987.654.321-00"
             });
             expect(atualizacaoCPF.sucesso).toBe(false);
             expect(atualizacaoCPF.erro).toContain("CPF já cadastrado para outro usuário");
 
-            // Tentar atualizar usuário1 com email do usuário2
             const atualizacaoEmail = gerenciador.atualizarUsuario(usuario1.usuario.id, {
                 email: "maria@email.com"
             });
@@ -172,10 +151,10 @@ describe("Sistema de Gerenciamento de Usuários - Testes de Integração", () =>
         });
     });
 
+    // ===== Casos Extremos e Robustez =====
     describe("Casos Extremos e Robustez", () => {
         test("deve lidar com operações em sistema vazio", () => {
             const gerenciador = sistema.obterGerenciador();
-
             expect(gerenciador.listarUsuarios()).toEqual([]);
             expect(gerenciador.buscarPorId("qualquer-id")).toBeNull();
             expect(gerenciador.buscarPorCPF("123.456.789-09")).toBeNull();
@@ -191,7 +170,6 @@ describe("Sistema de Gerenciamento de Usuários - Testes de Integração", () =>
         test("deve manter consistência após múltiplas operações", () => {
             const gerenciador = sistema.obterGerenciador();
 
-            // Realizar muitas operações
             for (let i = 0; i < 10; i++) {
                 gerenciador.adicionarUsuario(
                     `Usuário ${i}`,
@@ -199,15 +177,12 @@ describe("Sistema de Gerenciamento de Usuários - Testes de Integração", () =>
                     `000.000.00${i}-9${i}`
                 );
             }
-
             expect(gerenciador.listarUsuarios()).toHaveLength(10);
 
-            // Remover alguns usuários
             const usuarios = gerenciador.listarUsuarios();
             for (let i = 0; i < 5; i++) {
                 gerenciador.removerUsuario(usuarios[i].id);
             }
-
             expect(gerenciador.listarUsuarios()).toHaveLength(5);
 
             const stats = gerenciador.obterEstatisticas();
@@ -217,40 +192,34 @@ describe("Sistema de Gerenciamento de Usuários - Testes de Integração", () =>
         });
     });
 
+    // ===== Performance e Escalabilidade =====
     describe("Performance e Escalabilidade", () => {
         test("deve manter performance com muitos usuários", () => {
             const gerenciador = sistema.obterGerenciador();
             const inicio = Date.now();
 
-            // Cadastrar 100 usuários
             for (let i = 0; i < 100; i++) {
-                // Gerar CPF válido para cada usuário
                 const cpfBase = String(i).padStart(9, '0');
-                const cpfCompleto = cpfBase + '09'; // Exemplo de CPF válido
-
-                // Adicionar usuário
+                const cpfCompleto = cpfBase + '09';
                 const resultado = gerenciador.adicionarUsuario(
                     `Usuário ${i}`,
                     `usuario${i}@email.com`,
                     cpfCompleto
                 );
-                // Verificar se o cadastro foi bem-sucedido
                 expect(resultado.sucesso).toBe(true);
             }
 
             const tempoTotal = Date.now() - inicio;
-            expect(tempoTotal).toBeLessThan(1000); // Menos de 1 segundo
-
+            expect(tempoTotal).toBeLessThan(1000);
             expect(gerenciador.listarUsuarios()).toHaveLength(100);
         });
 
         test("deve manter eficiência nas buscas", () => {
             const gerenciador = sistema.obterGerenciador();
 
-            // Cadastrar usuários
             for (let i = 0; i < 50; i++) {
                 const cpfBase = String(i).padStart(9, '0');
-                const cpfCompleto = cpfBase + '09'; // Exemplo de CPF válido
+                const cpfCompleto = cpfBase + '09';
                 gerenciador.adicionarUsuario(
                     `Usuário ${i}`,
                     `usuario${i}@email.com`,
@@ -260,26 +229,21 @@ describe("Sistema de Gerenciamento de Usuários - Testes de Integração", () =>
 
             const inicio = Date.now();
 
-            // Realizar muitas buscas
             for (let i = 0; i < 50; i++) {
                 const cpfBase = String(i).padStart(9, '0');
-                const cpfCompleto = cpfBase + '09'; // Exemplo de CPF válido
+                const cpfCompleto = cpfBase + '09';
                 const usuario = gerenciador.buscarPorCPF(cpfCompleto);
                 expect(usuario).toBeDefined();
                 expect(usuario.nome).toBe(`Usuário ${i}`);
             }
 
             const tempoTotal = Date.now() - inicio;
-            expect(tempoTotal).toBeLessThan(100); // Menos de 100ms
+            expect(tempoTotal).toBeLessThan(100);
         });
     });
-});
-    afterAll(() => {
-    // Se tiver readline
-    if (sistema.rl) {
-        sistema.rl.close();
-    }
 
-    // Se tiver timers ativos
-    jest.clearAllTimers();
+    afterAll(() => {
+        if (sistema.rl) sistema.rl.close();
+        jest.clearAllTimers();
+    });
 });
