@@ -32,7 +32,29 @@ jobs:
           name: test-report
           path: test-results/test-results.xml
 
-build:
+  build:
+    runs-on: ubuntu-latest
+    needs: tests # Garante que o build só rode após os testes passarem
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v3
+
+      - name: Setup Node.js
+        uses: actions/setup-node@v3
+        with:
+          node-version: '18'
+
+      - name: Install dependencies
+        run: npm install
+
+      - name: Run build script
+        run: npm run build
+
+      - name: Upload build artifact
+        uses: actions/upload-artifact@v3
+        with:
+          name: build-package
+          path: build/ # Assumindo que o script de build gera os arquivos na pasta 'build'
 
 notify:
   runs-on: ubuntu-latest
