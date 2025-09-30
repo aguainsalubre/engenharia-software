@@ -10,15 +10,25 @@ const validaCPF = require('./cpf');
 class SistemaGerenciamentoUsuarios {
     constructor() {
         this.gerenciador = new GerenciadorUsuarios();
-        this.interface = new InterfaceCLI();
+
+        // Evitar abrir interface interativa em ambiente de teste
+        if (process.env.NODE_ENV !== "test") {
+            this.interface = new InterfaceCLI();
+        } else {
+            this.interface = null;
+        }
     }
 
-    /**
-     * Inicia o sistema em modo interativo
-     */
     iniciarModoInterativo() {
-        this.interface.iniciar();
+        if (this.interface) {
+            this.interface.iniciar();
+        }
     }
+
+    obterGerenciador() {
+        return this.gerenciador;
+    }
+}
 
     /**
      * Executa o sistema em modo demonstração

@@ -9,6 +9,12 @@ module.exports = {
     '**/?(*.)+(spec|test).js'
   ],
 
+  // Não transformar nada (já usamos CommonJS)
+  transform: {},
+
+  // Ignorar node_modules (padrão)
+  transformIgnorePatterns: ['/node_modules/'],
+
   // Cobertura de código
   collectCoverage: false,
   collectCoverageFrom: [
@@ -46,4 +52,3 @@ module.exports = {
   // Timeout para testes
   testTimeout: 10000
 };
-

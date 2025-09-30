@@ -271,4 +271,12 @@ describe("Sistema de Gerenciamento de Usuários - Testes de Integração", () =>
         });
     });
 });
+    afterAll(() => {
+    // Se tiver readline
+    if (sistema.rl) {
+        sistema.rl.close();
+    }
 
+    // Se tiver timers ativos
+    jest.clearAllTimers();
+});
