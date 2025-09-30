@@ -21,7 +21,7 @@ async function main() {
     });
 
     await transporter.sendMail({
-        from: smtpUser || 'henry22gamer@gmail.com',
+        from: smtpUser || 'henrique.bicalho@ges.inatel.br',
         to: recipient,
         subject: 'Pipeline executado!',
         text: 'Pipeline executado! Verifique artefatos e logs no GitHub Actions.',
