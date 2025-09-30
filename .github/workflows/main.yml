@@ -34,7 +34,7 @@ jobs:
 
   build:
     runs-on: ubuntu-latest
-    needs: tests # Garante que o build só rode após os testes passarem
+    needs: tests # Só roda se os testes passarem
     steps:
       - name: Checkout code
         uses: actions/checkout@v3
@@ -54,12 +54,12 @@ jobs:
         uses: actions/upload-artifact@v3
         with:
           name: build-package
-          path: build/ # Assumindo que o script de build gera os arquivos na pasta 'build'
+          path: build/
 
   notify:
     runs-on: ubuntu-latest
-    needs: [tests, build] # Precisa da construção de 'build' do outro membro se não nao roda
-    if: always() # caso falhe testes e buids roda de qualquer jeito (._.)
+    needs: [tests, build]
+    if: always()
     steps:
       - name: Checkout code
         uses: actions/checkout@v3
