@@ -42,11 +42,6 @@ class GerenciadorUsuarios {
 
     /**
      * Adiciona um novo usuário ao sistema
-     * @param {string} nome - Nome do usuário
-     * @param {string} email - Email do usuário
-     * @param {string} cpf - CPF do usuário
-     * @param {string} telefone - Telefone do usuário (opcional)
-     * @returns {Object} Resultado da operação
      */
     adicionarUsuario(nome, email, cpf, telefone = null) {
         // Validações
@@ -75,62 +70,36 @@ class GerenciadorUsuarios {
         const usuario = new Usuario(nome, email, cpf, telefone);
         this.usuarios.push(usuario);
 
-        return { 
-            sucesso: true, 
+        return {
+            sucesso: true,
             usuario: usuario.toJSON(),
             mensagem: 'Usuário cadastrado com sucesso'
         };
     }
 
-    /**
-     * Lista todos os usuários ativos
-     * @returns {Array} Lista de usuários
-     */
     listarUsuarios() {
-        return this.usuarios
-            .filter(usuario => usuario.ativo)
-            .map(usuario => usuario.toJSON());
+        return this.usuarios.filter(usuario => usuario.ativo).map(usuario => usuario.toJSON());
     }
 
-    /**
-     * Busca usuário por ID
-     * @param {string} id - ID do usuário
-     * @returns {Object|null} Usuário encontrado ou null
-     */
     buscarPorId(id) {
         const usuario = this.usuarios.find(u => u.id === id && u.ativo);
         return usuario ? usuario.toJSON() : null;
     }
 
-    /**
-     * Busca usuário por CPF
-     * @param {string} cpf - CPF do usuário
-     * @returns {Object|null} Usuário encontrado ou null
-     */
     buscarPorCPF(cpf) {
         const cpfLimpo = cpf.replace(/\D/g, '');
         const usuario = this.usuarios.find(u => u.cpf.replace(/\D/g, '') === cpfLimpo && u.ativo);
         return usuario ? usuario.toJSON() : null;
     }
 
-    /**
-     * Busca usuário por email
-     * @param {string} email - Email do usuário
-     * @returns {Object|null} Usuário encontrado ou null
-     */
     buscarPorEmail(email) {
         const usuario = this.usuarios.find(u => u.email.toLowerCase() === email.toLowerCase() && u.ativo);
         return usuario ? usuario.toJSON() : null;
     }
 
-    /**
-     * Remove usuário do sistema (soft delete)
-     * @param {string} id - ID do usuário
-     * @returns {Object} Resultado da operação
-     */
     removerUsuario(id) {
         const usuario = this.usuarios.find(u => u.id === id && u.ativo);
-        
+
         if (!usuario) {
             return { sucesso: false, erro: 'Usuário não encontrado' };
         }
@@ -139,20 +108,14 @@ class GerenciadorUsuarios {
         return { sucesso: true, mensagem: 'Usuário removido com sucesso' };
     }
 
-    /**
-     * Atualiza dados do usuário
-     * @param {string} id - ID do usuário
-     * @param {Object} dadosAtualizacao - Dados para atualização
-     * @returns {Object} Resultado da operação
-     */
     atualizarUsuario(id, dadosAtualizacao) {
         const usuario = this.usuarios.find(u => u.id === id && u.ativo);
-        
+
         if (!usuario) {
             return { sucesso: false, erro: 'Usuário não encontrado' };
         }
 
-        // Validar dados de atualização
+        // Validações
         if (dadosAtualizacao.nome && dadosAtualizacao.nome.trim().length < 2) {
             return { sucesso: false, erro: 'Nome deve ter pelo menos 2 caracteres' };
         }
@@ -165,7 +128,6 @@ class GerenciadorUsuarios {
             return { sucesso: false, erro: 'CPF inválido' };
         }
 
-        // Verificar duplicatas
         if (dadosAtualizacao.cpf) {
             const usuarioComCPF = this.buscarPorCPF(dadosAtualizacao.cpf);
             if (usuarioComCPF && usuarioComCPF.id !== id) {
@@ -180,33 +142,24 @@ class GerenciadorUsuarios {
             }
         }
 
-        // Atualizar dados
+        // Atualizar
         if (dadosAtualizacao.nome) usuario.nome = dadosAtualizacao.nome;
         if (dadosAtualizacao.email) usuario.email = dadosAtualizacao.email;
         if (dadosAtualizacao.cpf) usuario.cpf = dadosAtualizacao.cpf;
         if (dadosAtualizacao.telefone !== undefined) usuario.telefone = dadosAtualizacao.telefone;
 
-        return { 
-            sucesso: true, 
+        return {
+            sucesso: true,
             usuario: usuario.toJSON(),
             mensagem: 'Usuário atualizado com sucesso'
         };
     }
 
-    /**
-     * Valida formato de email
-     * @param {string} email - Email para validar
-     * @returns {boolean} True se válido
-     */
     validarEmail(email) {
         const regex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
         return regex.test(email);
     }
 
-    /**
-     * Obtém estatísticas do sistema
-     * @returns {Object} Estatísticas
-     */
     obterEstatisticas() {
         const usuariosAtivos = this.usuarios.filter(u => u.ativo);
         const usuariosInativos = this.usuarios.filter(u => !u.ativo);
@@ -215,11 +168,15 @@ class GerenciadorUsuarios {
             totalUsuarios: this.usuarios.length,
             usuariosAtivos: usuariosAtivos.length,
             usuariosInativos: usuariosInativos.length,
-            ultimoCadastro: usuariosAtivos.length > 0 ? 
+            ultimoCadastro: usuariosAtivos.length > 0 ?
                 usuariosAtivos[usuariosAtivos.length - 1].dataCadastro : null
         };
+    }
+
+    reset() {
+        this.usuarios = [];
+        return true;
     }
 }
 
 module.exports = { Usuario, GerenciadorUsuarios };
-

@@ -28,7 +28,6 @@ class SistemaGerenciamentoUsuarios {
     obterGerenciador() {
         return this.gerenciador;
     }
-}
 
     /**
      * Executa o sistema em modo demonstração
@@ -41,7 +40,7 @@ class SistemaGerenciamentoUsuarios {
             // Demonstrar validação de CPF
             console.log(chalk.yellow('1. Testando validação de CPF:'));
             const cpfsExemplo = ['123.456.789-09', '111.111.111-11', '000.000.001-91'];
-            
+
             cpfsExemplo.forEach(cpf => {
                 const valido = validaCPF(cpf);
                 const status = valido ? chalk.green('✓ Válido') : chalk.red('✗ Inválido');
@@ -49,21 +48,11 @@ class SistemaGerenciamentoUsuarios {
             });
 
             console.log(chalk.yellow('\n2. Cadastrando usuários de exemplo:'));
-            
+
             // Cadastrar usuários de exemplo
             const usuariosExemplo = [
-                {
-                    nome: 'João Silva',
-                    email: 'joao.silva@email.com',
-                    cpf: '123.456.789-09',
-                    telefone: '(11) 99999-1234'
-                },
-                {
-                    nome: 'Maria Santos',
-                    email: 'maria.santos@email.com',
-                    cpf: '987.654.321-00',
-                    telefone: '(11) 88888-5678'
-                }
+                { nome: 'João Silva', email: 'joao.silva@email.com', cpf: '123.456.789-09', telefone: '(11) 99999-1234' },
+                { nome: 'Maria Santos', email: 'maria.santos@email.com', cpf: '987.654.321-00', telefone: '(11) 88888-5678' }
             ];
 
             for (const dadosUsuario of usuariosExemplo) {
@@ -84,7 +73,7 @@ class SistemaGerenciamentoUsuarios {
             // Listar usuários cadastrados
             console.log(chalk.yellow('\n3. Listando usuários cadastrados:'));
             const usuarios = this.gerenciador.listarUsuarios();
-            
+
             if (usuarios.length > 0) {
                 usuarios.forEach((usuario, index) => {
                     console.log(chalk.cyan(`   ${index + 1}. ${usuario.nome}`));
@@ -108,7 +97,7 @@ class SistemaGerenciamentoUsuarios {
                 console.log(chalk.yellow('\n5. Demonstrando busca por CPF:'));
                 const primeiroUsuario = usuarios[0];
                 const usuarioEncontrado = this.gerenciador.buscarPorCPF(primeiroUsuario.cpf);
-                
+
                 if (usuarioEncontrado) {
                     console.log(chalk.green(`   ✓ Usuário encontrado: ${usuarioEncontrado.nome}`));
                 } else {
@@ -125,22 +114,15 @@ class SistemaGerenciamentoUsuarios {
             process.exit(1);
         }
     }
-
-    /**
-     * Obtém instância do gerenciador de usuários
-     */
-    obterGerenciador() {
-        return this.gerenciador;
-    }
 }
 
 // Função principal
 async function main() {
     const sistema = new SistemaGerenciamentoUsuarios();
-    
+
     // Verificar argumentos da linha de comando
     const args = process.argv.slice(2);
-    
+
     if (args.includes('--demo') || args.includes('-d')) {
         // Executar em modo demonstração
         await sistema.executarDemonstracao();
